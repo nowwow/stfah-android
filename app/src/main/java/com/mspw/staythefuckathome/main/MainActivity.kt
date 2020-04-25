@@ -12,6 +12,7 @@ import com.mspw.staythefuckathome.BaseApplication
 import com.mspw.staythefuckathome.R
 import com.mspw.staythefuckathome.SharedPreferencesUtil
 import com.mspw.staythefuckathome.data.user.User
+import com.mspw.staythefuckathome.my_page.MyPageFragment
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.activity_main.*
@@ -81,7 +82,11 @@ class MainActivity : AppCompatActivity() {
 
             }
             myPageBtn.setOnClickListener {
-
+                if (supportFragmentManager.findFragmentById(R.id.fragment) is MyPageFragment) {
+                    return@setOnClickListener
+                } else {
+                    replaceFragment(MyPageFragment())
+                }
             }
 
         }
