@@ -2,36 +2,34 @@ package com.mspw.staythefuckathome.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
-import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
-import bolts.Task
-import com.facebook.AccessToken
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.internal.WebDialog
+import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GetTokenResult
-import com.mspw.staythefuckathome.MainActivity
+import com.mspw.staythefuckathome.*
 import com.mspw.staythefuckathome.R
-import com.mspw.staythefuckathome.SharedPreferencesUtil
+import com.mspw.staythefuckathome.data.ListResponse
+import com.mspw.staythefuckathome.data.user.User
+import com.mspw.staythefuckathome.main.MainActivity
 import kotlinx.android.synthetic.main.activity_login.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class LoginActivity : AppCompatActivity() {
 
-
+    private lateinit var appContainer: AppContainer
     private lateinit var auth: FirebaseAuth
     private lateinit var callbackManager: CallbackManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
+        appContainer = (application as BaseApplication).appContainer
         auth = FirebaseAuth.getInstance()
         callbackManager = CallbackManager.Factory.create()
 
@@ -40,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         val token = SharedPreferencesUtil(this).getToken()
-        if (token != ""){
+        if (token != "") {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
@@ -55,6 +53,7 @@ class LoginActivity : AppCompatActivity() {
 
                 override fun onSuccess(result: LoginResult?) {
                     handleFacebookAccessToken(result?.accessToken)
+
                 }
 
                 override fun onCancel() {
@@ -83,14 +82,12 @@ class LoginActivity : AppCompatActivity() {
                         //서버에 정보 던지기
                         user?.getIdToken(true)
                             ?.addOnCompleteListener {
-                                it.result?.token?.let { token ->
-                                    SharedPreferencesUtil(this@LoginActivity).setToken(token)
-                                    sendToken(token)
+                                it.result?.token?.let { firebaseToken ->
+                                    requestMe(token, firebaseToken)
                                 }
                             }
 
                     } else {
-                        // If sign in fails, display a message to the user.
                         Toast.makeText(this@LoginActivity, "Sign in failed", Toast.LENGTH_SHORT)
                             .show()
                     }
@@ -98,11 +95,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendToken(token: String) {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
 
     override fun onStart() {
         super.onStart()
@@ -112,6 +104,67 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+    }
+
+    private fun requestMe(token: AccessToken?, firebaseToken: String) {
+        val graphRequest = GraphRequest.newMeRequest(token) { obj, response ->
+            Log.e("result", obj.toString())
+            val userId = obj.get("id").toString()
+            val userName = obj.get("name").toString()
+            val userProfile = "https://graph.facebook.com/${obj.get("id")}/picture?type=large"
+
+            appContainer.userRepository.getUserExist(userId).enqueue(object :
+                Callback<ListResponse<User>> {
+                override fun onFailure(call: Call<ListResponse<User>>, t: Throwable) {
+                }
+
+                override fun onResponse(
+                    call: Call<ListResponse<User>>,
+                    response: Response<ListResponse<User>>
+                ) {
+                    if (response.isSuccessful) {
+                        if (response.body()?.results?.isEmpty() == true) {
+                            registerUser(firebaseToken, userName, userProfile)
+                        } else {
+                            SharedPreferencesUtil(this@LoginActivity).setToken(firebaseToken)
+                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                            finish()
+                        }
+                    } else {
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "Network Error ${response.code()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+            })
+        }
+        val parameters = Bundle()
+        parameters.putString("fields", "id,name")
+        graphRequest.parameters = parameters
+        graphRequest.executeAsync()
+    }
+
+    private fun registerUser(firebaseToken: String, userName: String, userProfile: String) {
+        appContainer.userRepository.registerUser(firebaseToken, userName, userProfile).enqueue(object :Callback<Any>{
+            override fun onFailure(call: Call<Any>, t: Throwable) {
+                t.printStackTrace()
+            }
+
+            override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                if(response.isSuccessful){
+                    SharedPreferencesUtil(this@LoginActivity).setToken(firebaseToken)
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }else{
+                    Toast.makeText(this@LoginActivity, "Sign up fail", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        })
     }
 
 //    fun signOut() {
