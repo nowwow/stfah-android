@@ -31,6 +31,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {
@@ -50,10 +53,12 @@ dependencies {
     // Image loader
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'jp.wasabeef:picasso-transformations:2.2.1'
+
     // Player
     implementation 'com.google.android.exoplayer:exoplayer:2.11.4'
     // Permission
     implementation 'org.permissionsdispatcher:permissionsdispatcher:4.7.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt 'org.permissionsdispatcher:permissionsdispatcher-processor:4.7.0'
     // Rx
     implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
@@ -68,4 +73,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
 }
