@@ -6,19 +6,18 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Gravity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import com.mspw.staythefuckathome.AppContainer
 import com.mspw.staythefuckathome.BaseApplication
 import com.mspw.staythefuckathome.R
 import com.mspw.staythefuckathome.SharedPreferencesUtil
 import com.mspw.staythefuckathome.data.user.User
+import com.mspw.staythefuckathome.main.home.HomeFragment
 import com.mspw.staythefuckathome.my_page.MyPageFragment
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.drawer_main.*
 import kotlinx.android.synthetic.main.drawer_main.view.*
-import kotlinx.android.synthetic.main.drawer_main.view.nameText
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         val fm: FragmentManager = supportFragmentManager
         val fragmentTransaction = fm.beginTransaction()
-        fragmentTransaction.add(R.id.fragment, MainFragment())
+        fragmentTransaction.add(R.id.fragment, HomeFragment())
         fragmentTransaction.commit()
 
         setDrawer()
@@ -69,10 +68,10 @@ class MainActivity : AppCompatActivity() {
                 drawerLayout.closeDrawer(Gravity.LEFT)
             }
             homeBtn.setOnClickListener {
-                if (supportFragmentManager.findFragmentById(R.id.fragment) is MainFragment) {
+                if (supportFragmentManager.findFragmentById(R.id.fragment) is HomeFragment) {
                     return@setOnClickListener
                 } else {
-                    replaceFragment(MainFragment())
+                    replaceFragment(HomeFragment())
                 }
             }
             settingBtn.setOnClickListener {
