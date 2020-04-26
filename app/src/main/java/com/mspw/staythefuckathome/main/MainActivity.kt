@@ -1,9 +1,11 @@
 package com.mspw.staythefuckathome.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Gravity
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.mspw.staythefuckathome.AppContainer
@@ -11,7 +13,9 @@ import com.mspw.staythefuckathome.BaseApplication
 import com.mspw.staythefuckathome.R
 import com.mspw.staythefuckathome.SharedPreferencesUtil
 import com.mspw.staythefuckathome.data.user.User
+import com.mspw.staythefuckathome.login.LoginActivity
 import com.mspw.staythefuckathome.main.home.HomeFragment
+import com.mspw.staythefuckathome.main.map.MapFragment
 import com.mspw.staythefuckathome.my_page.MyPageFragment
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
@@ -35,17 +39,8 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        val fm: FragmentManager = supportFragmentManager
-        val fragmentTransaction = fm.beginTransaction()
-        fragmentTransaction.add(R.id.fragment, HomeFragment())
-        fragmentTransaction.commit()
-
-        setDrawer()
-    }
-
-    private fun setDrawer() {
         val token = SharedPreferencesUtil(this).getToken()
-        appContainer.userRepository.getUserData(token).enqueue(object : Callback<User> {
+        appContainer.userRepository.getUserData("Bearer $token").enqueue(object : Callback<User> {
             override fun onFailure(call: Call<User>, t: Throwable) {
                 t.printStackTrace()
                 Log.e("Get user data fail", t.message)
@@ -57,12 +52,27 @@ class MainActivity : AppCompatActivity() {
                     Picasso.get().load(response.body()?.image)
                         .transform(CropCircleTransformation())
                         .into(userProfile)
+                    if (response.body()?.address == "" || true) {
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragment, MapFragment()).commit()
+                        toolbar.visibility = View.GONE
+                    } else {
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragment, HomeFragment()).commit()
+                    }
                 } else {
-
+                    Log.e("Get user data error", response.code().toString() + response.message())
                 }
             }
-
         })
+
+
+        setDrawer()
+    }
+
+
+    private fun setDrawer() {
+
         drawer.run {
             closeBtn.setOnClickListener {
                 drawerLayout.closeDrawer(Gravity.LEFT)
@@ -78,7 +88,9 @@ class MainActivity : AppCompatActivity() {
 
             }
             signOutBtn.setOnClickListener {
-
+                val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
             }
             myPageBtn.setOnClickListener {
                 if (supportFragmentManager.findFragmentById(R.id.fragment) is MyPageFragment) {
