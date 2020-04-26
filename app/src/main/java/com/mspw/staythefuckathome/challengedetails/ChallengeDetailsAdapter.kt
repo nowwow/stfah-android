@@ -85,13 +85,17 @@ class ChallengeDetailsAdapter(
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION)
                     adapter.moveToUberEats(adapterPosition)
-
             }
         }
 
         fun bind(reward: ChallengeDetails.Reward) {
             tag.text = reward.tag
             coupon.text = reward.coupon
+            if(reward.sponsorship == null){
+                uber.visibility = View.GONE
+            }else{
+                uber.visibility = View.VISIBLE
+            }
 
         }
 
