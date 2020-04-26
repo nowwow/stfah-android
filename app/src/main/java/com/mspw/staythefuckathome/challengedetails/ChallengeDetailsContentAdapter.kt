@@ -59,21 +59,21 @@ class ChallengeDetailsContentAdapter(
         fun bind(video: Video) {
             try {
                 Picasso.get()
-                    .load(video.thumbnail?.url)
+                    .load(video.url)
                     .resize(imageSize, imageSize)
                     .centerCrop()
                     .placeholder(R.color.darkWhite)
                     .error(R.color.darkWhite)
                     .into(thumnail)
                 Picasso.get()
-                    .load("https://d2pzex094z0wfi.cloudfront.net/media/images/products/2020/04/b989f4ce-9594-4d73-bc67-b925ae0d197b.png")
+                    .load(video.user?.profile?.url)
                     .resize(28, 28)
                     .centerCrop()
                     .transform(CropCircleTransformation())
                     .placeholder(R.color.darkWhite)
                     .error(R.color.darkWhite)
                     .into(profile)
-                username.text = ""
+                username.text = video.user?.name
             } catch (exception: Exception) {
                 Log.d("profile", "exception: $exception")
             }

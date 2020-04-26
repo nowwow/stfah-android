@@ -8,8 +8,8 @@ sealed class ChallengeDetails {
 
     data class Reward(
         override val key: String = "",
-        val tag: String,
-        val coupon: String
+        val tag: String? = null,
+        val coupon: String? = null
     ) : ChallengeDetails()
 
     data class Content(

@@ -50,7 +50,10 @@ class ChallengeDetailsActivity : AppCompatActivity() {
 
     private fun setupViewModel() {
         val appContainer = (application as BaseApplication).appContainer
-        viewModel = ChallengeDetailsViewModel(appContainer.videoRepository)
+        viewModel = ChallengeDetailsViewModel(
+            appContainer.challengeRepository,
+            appContainer.videoRepository
+        )
     }
 
     private fun setupObserve() {
