@@ -1,6 +1,7 @@
 package com.mspw.staythefuckathome.data.user
 
 import com.mspw.staythefuckathome.data.ListResponse
+import io.reactivex.Single
 import retrofit2.Call
 
 class UserRepository(private val userService: UserService) {
@@ -16,4 +17,9 @@ class UserRepository(private val userService: UserService) {
     fun getUserData(firebaseToken: String):Call<User>{
         return userService.getMyUser(firebaseToken)
     }
+
+    fun findMyInfo(firebaseToken: String): Single<User> {
+        return userService.findMyInfo("Bearer $firebaseToken")
+    }
+
 }

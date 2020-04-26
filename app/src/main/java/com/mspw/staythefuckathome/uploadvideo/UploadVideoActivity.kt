@@ -2,25 +2,25 @@ package com.mspw.staythefuckathome.uploadvideo
 
 import android.Manifest
 import android.database.Cursor
-import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.loader.content.CursorLoader
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.mspw.staythefuckathome.BaseApplication
 import com.mspw.staythefuckathome.R
+import com.mspw.staythefuckathome.SharedPreferencesUtil
 import com.mspw.staythefuckathome.data.video.Video
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -28,10 +28,6 @@ import kotlinx.android.synthetic.main.activity_upload_video.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
 
 @RuntimePermissions
 class UploadVideoActivity : AppCompatActivity() {
@@ -41,18 +37,15 @@ class UploadVideoActivity : AppCompatActivity() {
     private val compositeDisposable = CompositeDisposable()
     private lateinit var videoAdapter: UploadVideoAdapter
     private lateinit var viewModel: UploadVideoViewModel
+    private val challengeId by lazy { intent.getLongExtra("challengeId", 0) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_upload_video)
         setupUi()
         setupViewModel()
+        setupObserve()
         loadVideosWithPermissionCheck()
-    }
-
-    override fun onStart() {
-        super.onStart()
-//        loadVideosWithPermissionCheck()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -70,6 +63,10 @@ class UploadVideoActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
             R.id.uploadVideo -> {
                 val video = videoAdapter.getSelectedVideo()
                 if (isSelected && video != null) {
@@ -91,7 +88,30 @@ class UploadVideoActivity : AppCompatActivity() {
 
     private fun setupViewModel() {
         val appContainer = (application as BaseApplication).appContainer
-        viewModel = UploadVideoViewModel(appContainer.videoRepository)
+        viewModel = UploadVideoViewModel(
+            appContainer.userRepository,
+            appContainer.videoRepository
+        )
+    }
+
+    private fun setupObserve() {
+        with (viewModel) {
+            isRequesting.observe(this@UploadVideoActivity, Observer {
+                if (it) {
+                    uploadVideoLoading.visibility = View.VISIBLE
+                    return@Observer
+                }
+
+                uploadVideoLoading.visibility = View.GONE
+            })
+            isFinished.observe(this@UploadVideoActivity, Observer {
+                if (!it) {
+                    return@Observer
+                }
+
+                onBackPressed()
+            })
+        }
     }
 
     private fun toVideo(cursor: Cursor, data: String): String {
@@ -171,57 +191,32 @@ class UploadVideoActivity : AppCompatActivity() {
         }
     }
 
-    private fun getOutputMediaFile(type: MediaType): File? {
-        val mediaStorageDir = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-            "stfah"
-        )
+    private fun getVideoFromUri(args: String): String? {
+        val uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        val data = MediaStore.Video.VideoColumns.DATA
+        val projection = arrayOf(data)
+        val cursor = contentResolver.query(uri, projection, "$data=?", arrayOf(args), null)
 
-        mediaStorageDir.apply {
-            if (!exists()) {
-                if (!mkdirs()) {
-                    return null
-                }
-            }
-        }
-
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        return when (type) {
-            MediaType.IMAGE -> {
-                File("${mediaStorageDir.path}${File.separator}IMG_$timeStamp.jpg")
-            }
-            MediaType.VIDEO -> {
-                File("${mediaStorageDir.path}${File.separator}VID_$timeStamp.mp4")
+        return if (cursor == null) {
+            null
+        } else {
+            try {
+                cursor.moveToFirst()
+                val index = cursor.getColumnIndexOrThrow(data)
+                cursor.getString(index)
+            } catch (e: Exception) {
+                null
+            } finally {
+                cursor.close()
             }
         }
     }
 
     private fun uploadVideo(video: Video) {
-        val contentUrl = video.url!!
+        val contentUrl = getVideoFromUri(video.url!!)
         val content = File(contentUrl)
-        val retriever = MediaMetadataRetriever().apply { setDataSource(contentUrl) }
-        var fileOutputStream: FileOutputStream? = null
-        val image = try {
-            retriever.getFrameAtTime(MICROSECOND, MediaMetadataRetriever.OPTION_CLOSEST)
-        } catch (error: RuntimeException) {
-            null
-        }
-        val file = getOutputMediaFile(MediaType.IMAGE)
-        val thumbnail = try {
-            fileOutputStream = FileOutputStream(file)
-            image?.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
-            file
-        } catch (exception: ClassCastException) {
-            null
-        }  catch (exception: IOException) {
-            null
-        } finally {
-            fileOutputStream?.flush()
-            fileOutputStream?.close()
-        }
-
-        Log.d(TAG, "video: $content")
-        Log.d(TAG, "thumbnail: $thumbnail")
+        val token = SharedPreferencesUtil(this).getToken()
+        viewModel.uploadVideo(token, challengeId, Uri.fromFile(content))
     }
 
     fun activeMenuItem() {
@@ -233,15 +228,9 @@ class UploadVideoActivity : AppCompatActivity() {
         }
     }
 
-    enum class MediaType {
-        IMAGE,
-        VIDEO
-    }
-
     companion object {
         private val TAG = UploadVideoActivity::class.java.simpleName
         private const val SPAN_COUNT = 3
-        private const val MICROSECOND = 1000000L
     }
 
 }

@@ -42,9 +42,9 @@ class PlayChallengeActivity : AppCompatActivity() {
     }
 
     private fun setupUi() {
+        video = intent.getParcelableExtra("video")
         playChallengeUsername.text = video?.user?.name
         try {
-            video = intent.getParcelableExtra("video")
             val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
             Glide.with(playChallengeUserProfile.context)
                 .load(video?.user?.image)
