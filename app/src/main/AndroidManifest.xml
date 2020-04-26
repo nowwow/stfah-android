@@ -16,7 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashActivity">
+
+        <activity
+            android:name=".SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,7 +50,9 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".login.LoginActivity">
+        <activity
+            android:name=".login.LoginActivity"
+            android:screenOrientation="portrait">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -60,12 +65,23 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.MainActivity" />
-        <activity android:name=".challengedetails.ChallengeDetailsActivity" />
-        <activity android:name=".playchallenge.PlayChallengeActivity" />
+
+        <activity
+            android:name=".main.MainActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".challengedetails.ChallengeDetailsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".playchallenge.PlayChallengeActivity"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".uploadvideo.UploadVideoActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>
