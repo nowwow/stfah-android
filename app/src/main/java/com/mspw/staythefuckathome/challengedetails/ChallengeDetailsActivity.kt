@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.webkit.WebChromeClient
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -87,7 +86,10 @@ class ChallengeDetailsActivity : AppCompatActivity() {
 
     private fun setupListener() {
         challengeDetailsUploadButton.setOnClickListener {
-            startActivity(Intent(this, UploadVideoActivity::class.java))
+            val intent = Intent(this, UploadVideoActivity::class.java).apply {
+                putExtra("challengeId", challenge?.id ?: 0)
+            }
+            startActivity(intent)
         }
     }
 
@@ -127,7 +129,7 @@ class ChallengeDetailsActivity : AppCompatActivity() {
         val intent = Intent(this, PlayChallengeActivity::class.java).apply {
             putExtra("video", video)
         }
-        startActivity(intent)
+        startActivityForResult(intent, REQUEST_CODE)
     }
 
     companion object {
@@ -135,6 +137,7 @@ class ChallengeDetailsActivity : AppCompatActivity() {
         private const val BASE_URL = "https://test.mspw.io/"
         private const val TRANSVERSE_RATIO = 16
         private const val SPECIES_RATIO = 9
+        private const val REQUEST_CODE = 3
     }
 
 }

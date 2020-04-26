@@ -5,8 +5,16 @@ import io.reactivex.Flowable
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
+import io.reactivex.Single
+import retrofit2.http.*
 
 interface VideoService {
+
+    @POST("videos/")
+    fun create(
+        @Header("Authorization") token: String,
+        @Body createVideo: CreateVideo
+    ): Single<Video>
 
     @GET("videos/")
     fun findAllByChallengeId(
