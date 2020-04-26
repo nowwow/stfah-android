@@ -41,7 +41,7 @@ import java.io.IOException
 @RuntimePermissions
 class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
-    private var mapView: MapView? = null;
+    private var mapView: MapView? = null
     private var mLocation: Location? = null
     private var address: String = ""
     private var currentMarker: Marker? = null
@@ -166,7 +166,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
     fun getMyLocation() {
-        Log.e("asd", "asdasdadasdasd")
         activity?.let {
             val task: Task<Location> =
                 LocationServices.getFusedLocationProviderClient(it).lastLocation
@@ -181,4 +180,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
     }
+
+    companion object {
+        private val TAG = MapFragment::class.java.simpleName
+    }
+
 }
