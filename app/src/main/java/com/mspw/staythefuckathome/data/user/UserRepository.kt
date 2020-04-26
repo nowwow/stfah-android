@@ -11,12 +11,10 @@ class UserRepository(private val userService: UserService) {
     }
 
     fun registerUser(firebaseToken: String, userName: String, userProfile: String):Call<Any>{
-        Log.e("registerUser data", firebaseToken)
         return userService.registerUser(firebaseToken,SignUp(userName, userProfile))
     }
 
     fun getUserData(firebaseToken: String):Call<User>{
-        Log.e("get user data", firebaseToken)
         return userService.getMyUser(firebaseToken)
     }
 

@@ -46,7 +46,6 @@ class MyPageVideoAdapter(
                 .centerCrop()
                 .into(image)
             title.text = items[position].title
-            //TODO : Add video -> tag
         }
     }
 }
