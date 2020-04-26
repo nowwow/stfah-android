@@ -103,7 +103,7 @@ class ChallengeDetailsAdapter(
                     25f,
                     displayMetrics
                 ).toInt()
-                val imageSize = (displayMetrics.widthPixels / SPAN_COUNT) - spacing
+                val imageSize = (displayMetrics.widthPixels - spacing) / SPAN_COUNT
                 addItemDecoration(ChallengeDetailsVideoSpaceDecoration(sideSpacing, bottomSpacing))
                 layoutManager = GridLayoutManager(context, SPAN_COUNT)
                 adapter = ChallengeDetailsContentAdapter(mutableListOf(), imageSize)

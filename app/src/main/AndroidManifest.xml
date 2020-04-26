@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mspw.staythefuckathome">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".BaseApplication"
@@ -50,12 +52,14 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
+        <activity android:name=".main.MainActivity"/>
 
         <activity android:name=".challengedetails.ChallengeDetailsActivity" />
 
-        <activity android:name=".main.MainActivity"/>
-
         <activity android:name=".playchallenge.PlayChallengeActivity"/>
+        <activity
+            android:name=".uploadvideo.UploadVideoActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

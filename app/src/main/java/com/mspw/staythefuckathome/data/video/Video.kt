@@ -9,6 +9,9 @@ import kotlinx.android.parcel.Parcelize
 data class Video(
     @SerializedName("id")
     val id: Long = 0,
-    val thumbnail: Image? = null
+    val thumbnail: Image? = null,
+    var url: String? = null,
+    var tag: String? = null,
+    var isSelected: Boolean = false
 ) : Parcelable
 

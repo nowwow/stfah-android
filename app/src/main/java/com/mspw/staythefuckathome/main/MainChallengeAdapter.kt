@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mspw.staythefuckathome.R
-import com.mspw.staythefuckathome.data.Challenge.Challenge
+import com.mspw.staythefuckathome.data.challenge.Challenge
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_main_challenge.view.*
 
