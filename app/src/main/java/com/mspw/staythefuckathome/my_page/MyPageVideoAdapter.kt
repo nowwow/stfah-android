@@ -40,7 +40,7 @@ class MyPageVideoAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.run {
-            Picasso.get().load(items[position].thumbnail?.url).into(image)
+            Picasso.get().load(items[position].url).into(image)
             title.text = items[position].toString()
             //TODO : Add video -> tag
         }
