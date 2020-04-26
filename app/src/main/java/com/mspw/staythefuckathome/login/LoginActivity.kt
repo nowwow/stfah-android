@@ -175,9 +175,5 @@ class LoginActivity : AppCompatActivity() {
             })
     }
 
-    fun signOut() {
-        auth.signOut()
-        LoginManager.getInstance().logOut()
-    }
 
 }

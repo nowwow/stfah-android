@@ -45,7 +45,7 @@ class MyPageVideoAdapter(
                 .load(items[position].url)
                 .centerCrop()
                 .into(image)
-            title.text = items[position].title
+            title.text = items[position].challenge?.title
         }
     }
 }

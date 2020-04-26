@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.facebook.login.LoginManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.mspw.staythefuckathome.AppContainer
 import com.mspw.staythefuckathome.BaseApplication
@@ -31,6 +33,7 @@ import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appContainer: AppContainer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -56,12 +59,10 @@ class MainActivity : AppCompatActivity() {
                         .transform(CropCircleTransformation())
                         .into(userProfile)
                     if (response.body()?.address == "" ) {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragment, MapFragment()).commit()
+                        replaceFragment(MapFragment())
                         toolbar.visibility = View.GONE
                     } else {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragment, HomeFragment()).commit()
+                        replaceFragment(HomeFragment())
                     }
                 } else {
                     Log.e("Get user data error", response.code().toString() + response.message())
@@ -89,13 +90,14 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             settingBtn.setOnClickListener {
-                val fragmentManager = supportFragmentManager
-                fragmentManager.beginTransaction()
-                    .replace(R.id.fragment, MapFragment()).commit()
+                replaceFragment(MapFragment())
                 toolbar.visibility = View.GONE
                 drawerLayout.closeDrawer(Gravity.LEFT)
             }
             signOutBtn.setOnClickListener {
+                FirebaseAuth.getInstance().signOut()
+                LoginManager.getInstance().logOut()
+                SharedPreferencesUtil(this@MainActivity).setToken("")
                 val intent = Intent(this@MainActivity, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -118,4 +120,5 @@ class MainActivity : AppCompatActivity() {
         fragmentManager.beginTransaction()
             .replace(R.id.fragment, fragment).commit()
     }
+
 }
