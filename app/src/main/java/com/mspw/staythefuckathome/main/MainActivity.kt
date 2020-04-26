@@ -19,6 +19,7 @@ import com.mspw.staythefuckathome.SharedPreferencesUtil
 import com.mspw.staythefuckathome.data.user.User
 import com.mspw.staythefuckathome.login.LoginActivity
 import com.mspw.staythefuckathome.main.home.HomeFragment
+import com.mspw.staythefuckathome.main.map.MapActivity
 import com.mspw.staythefuckathome.main.map.MapFragment
 import com.mspw.staythefuckathome.my_page.MyPageFragment
 import com.squareup.picasso.Picasso
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         menuBtn.setOnClickListener {
             drawerLayout.openDrawer(Gravity.LEFT)
         }
+        replaceFragment(HomeFragment())
 
 
         val token = SharedPreferencesUtil(this).getToken()
@@ -59,10 +61,9 @@ class MainActivity : AppCompatActivity() {
                         .transform(CropCircleTransformation())
                         .into(userProfile)
                     if (response.body()?.address == "" ) {
-                        replaceFragment(MapFragment())
-                        toolbar.visibility = View.GONE
-                    } else {
-                        replaceFragment(HomeFragment())
+                        val intent = Intent(this@MainActivity, MapActivity::class.java)
+                        startActivity(intent)
+                        finish()
                     }
                 } else {
                     Log.e("Get user data error", response.code().toString() + response.message())
@@ -90,9 +91,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             settingBtn.setOnClickListener {
-                replaceFragment(MapFragment())
-                toolbar.visibility = View.GONE
-                drawerLayout.closeDrawer(Gravity.LEFT)
+                val intent = Intent(this@MainActivity, MapActivity::class.java)
+                startActivity(intent)
             }
             signOutBtn.setOnClickListener {
                 FirebaseAuth.getInstance().signOut()

@@ -92,7 +92,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val currentUser = auth.currentUser
+        val currentUser = FirebaseAuth.getInstance().currentUser
         currentUser?.run {
             loading.visibility = View.VISIBLE
             this.getIdToken(true).addOnCompleteListener {
