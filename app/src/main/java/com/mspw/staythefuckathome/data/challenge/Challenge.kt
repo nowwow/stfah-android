@@ -1,4 +1,4 @@
-package com.mspw.staythefuckathome.data.Challenge
+package com.mspw.staythefuckathome.data.challenge
 
 import android.os.Parcelable
 import com.mspw.staythefuckathome.data.Image

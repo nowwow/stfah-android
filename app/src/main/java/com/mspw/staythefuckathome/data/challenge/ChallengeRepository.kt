@@ -1,4 +1,4 @@
-package com.mspw.staythefuckathome.data.Challenge
+package com.mspw.staythefuckathome.data.challenge
 
 class ChallengeRepository(private val youtubeService:ChallengeService){
 

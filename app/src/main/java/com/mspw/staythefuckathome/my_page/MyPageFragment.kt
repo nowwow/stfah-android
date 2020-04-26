@@ -10,10 +10,8 @@ import androidx.fragment.app.Fragment
 import com.mspw.staythefuckathome.BaseApplication
 import com.mspw.staythefuckathome.R
 import com.mspw.staythefuckathome.SharedPreferencesUtil
-import com.mspw.staythefuckathome.data.Challenge.Challenge
 import com.mspw.staythefuckathome.data.user.User
 import com.mspw.staythefuckathome.data.video.Video
-import com.mspw.staythefuckathome.main.MainChallengeAdapter
 import com.mspw.staythefuckathome.playchallenge.PlayChallengeActivity
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation

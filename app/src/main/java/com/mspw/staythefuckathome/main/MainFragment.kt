@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.mspw.staythefuckathome.R
 import com.mspw.staythefuckathome.challengedetails.ChallengeDetailsActivity
-import com.mspw.staythefuckathome.data.Challenge.Challenge
+import com.mspw.staythefuckathome.data.challenge.Challenge
 
 class MainFragment : Fragment(), MainChallengeAdapter.OnItemClickedListener {
 
