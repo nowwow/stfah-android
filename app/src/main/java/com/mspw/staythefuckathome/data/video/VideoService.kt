@@ -8,6 +8,8 @@ import retrofit2.http.Query
 interface VideoService {
 
     @GET("videos/")
-    fun findAllByTitle(@Query("title") title: String): Flowable<ListResponse<Video>>
+    fun findAllByChallengeId(
+        @Query("challenge_id") challengeId: Long
+    ): Flowable<ListResponse<Video>>
 
 }

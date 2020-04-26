@@ -12,6 +12,6 @@ interface ChallengeService {
     fun findAll(): Flowable<ListResponse<Challenge>>
 
     @GET("challenges/{id}/")
-    fun findOneById(@Path("id") id: String): Single<Challenge>
+    fun findOneById(@Path("id") id: Long): Single<Challenge>
 
 }

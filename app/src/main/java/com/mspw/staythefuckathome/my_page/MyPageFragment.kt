@@ -45,7 +45,7 @@ class MyPageFragment : Fragment(),
                     override fun onResponse(call: Call<User>, response: Response<User>) {
                         if (response.isSuccessful) {
                             Picasso.get()
-                                .load(response.body()?.profile?.url)
+                                .load(response.body()?.image)
                                 .transform(CropCircleTransformation())
                                 .into(profile)
                             nameText.text = response.body()?.name

@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call<User>, response: Response<User>) {
                 if (response.isSuccessful) {
                     nameText.text = response.body()?.name ?: ""
-                    Picasso.get().load(response.body()?.profile?.url)
+                    Picasso.get().load(response.body()?.image)
                         .transform(CropCircleTransformation())
                         .into(userProfile)
                 } else {

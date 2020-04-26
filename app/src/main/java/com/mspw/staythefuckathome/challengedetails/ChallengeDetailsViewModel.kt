@@ -26,13 +26,13 @@ class ChallengeDetailsViewModel(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    private fun findChallengeById(id: String): Flowable<Challenge> {
+    private fun findChallengeById(id: Long): Flowable<Challenge> {
         return challengeRepository.findOneById(id)
             .toFlowable()
     }
 
-    private fun findVideosByTitle(title: String): Flowable<ListResponse<Video>> {
-        return videoRepository.findAllByTitle(title)
+    private fun findVideosByChallengeId(challengeId: Long): Flowable<ListResponse<Video>> {
+        return videoRepository.findAllByChallengeId(challengeId)
     }
 
     private fun handleLoadData(details: List<ChallengeDetails>) {
@@ -40,22 +40,30 @@ class ChallengeDetailsViewModel(
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun handleLoadDataError(error: Throwable) { }
+    private fun handleLoadDataError(error: Throwable) {
 
-    fun loadData(id: String, title: String) {
+    }
+
+    fun loadData(id: Long) {
         Flowable.zip(
             findChallengeById(id),
-            findVideosByTitle(title),
+            findVideosByChallengeId(id),
             BiFunction<Challenge, ListResponse<Video>, Pair<Challenge, ListResponse<Video>>> {
                 t1, t2 -> Pair(t1, t2)
             }
         )
         .map {
             val (challenge, videos) = it
+            val sponsorships = challenge.sponsorships
+            var coupon = ""
+            if (sponsorships.isNotEmpty()) {
+                coupon = sponsorships[0].coupon ?: ""
+            }
+
             mutableListOf(
                 ChallengeDetails.Reward(
                     tag = challenge.title,
-                    coupon = challenge.reward
+                    coupon = coupon
                 ),
                 ChallengeDetails.Content("", videos.results)
             )
@@ -64,6 +72,10 @@ class ChallengeDetailsViewModel(
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(::handleLoadData, ::handleLoadDataError)
         .also { _compositeDisposable.add(it) }
+    }
+
+    companion object {
+        private val TAG = ChallengeDetailsViewModel::class.java.simpleName
     }
 
 

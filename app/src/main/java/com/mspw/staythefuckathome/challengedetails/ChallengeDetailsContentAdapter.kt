@@ -7,13 +7,16 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.mspw.staythefuckathome.R
 import com.mspw.staythefuckathome.data.video.Video
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 class ChallengeDetailsContentAdapter(
     private val videos: MutableList<Video>,
+    private val view: ChallengeDetailsActivity,
     private val imageSize: Int
 ) : RecyclerView.Adapter<ChallengeDetailsContentAdapter.ViewHolder>() {
 
@@ -21,6 +24,7 @@ class ChallengeDetailsContentAdapter(
         return ViewHolder(
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_challenge_details_video, parent, false),
+            this,
             imageSize
         )
     }
@@ -39,39 +43,56 @@ class ChallengeDetailsContentAdapter(
         notifyDataSetChanged()
     }
 
+    fun moveToPlayChallenge(position: Int) {
+        view.moveToPlayChallenge(videos[position])
+    }
+
     class ViewHolder(
         view: View,
+        adapter: ChallengeDetailsContentAdapter,
         private val imageSize: Int
     ) : RecyclerView.ViewHolder(view) {
 
-        private val thumnail: ImageView
+        private val thumbnail: ImageView
         private val profile: ImageView
         private val username: TextView
 
         init {
-            thumnail = view.findViewById<ImageView>(R.id.videoThumbnail).apply {
-                layoutParams.height = imageSize
+            with (view) {
+                this@ViewHolder.thumbnail = findViewById<ImageView>(R.id.videoThumbnail).apply {
+                    layoutParams.height = imageSize
+                }
+                this@ViewHolder.profile = findViewById(R.id.videoUserProfile)
+                this@ViewHolder.username = findViewById(R.id.videoUserName)
+                setOnClickListener {
+                    val position = adapterPosition
+                    if (position == RecyclerView.NO_POSITION) {
+                        return@setOnClickListener
+                    }
+
+                    adapter.moveToPlayChallenge(position)
+                }
             }
-            profile = view.findViewById(R.id.videoUserProfile)
-            username = view.findViewById(R.id.videoUserName)
         }
 
         fun bind(video: Video) {
             try {
-                Picasso.get()
+                val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
+                Glide.with(thumbnail.context)
                     .load(video.url)
-                    .resize(imageSize, imageSize)
                     .centerCrop()
+                    .transition(DrawableTransitionOptions.with(factory))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.color.darkWhite)
                     .error(R.color.darkWhite)
-                    .into(thumnail)
-                Picasso.get()
-                    .load(video.user?.profile?.url)
-                    .resize(28, 28)
-                    .centerCrop()
-                    .transform(CropCircleTransformation())
-                    .placeholder(R.color.darkWhite)
-                    .error(R.color.darkWhite)
+                    .into(thumbnail)
+                Glide.with(profile.context)
+                    .load(video.user?.image)
+                    .transition(DrawableTransitionOptions.with(factory))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .circleCrop()
+                    .placeholder(R.drawable.circle_dark_white)
+                    .error(R.drawable.circle_dark_white)
                     .into(profile)
                 username.text = video.user?.name
             } catch (exception: Exception) {
