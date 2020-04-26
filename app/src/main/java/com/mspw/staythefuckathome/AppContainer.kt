@@ -7,6 +7,7 @@ import com.mspw.staythefuckathome.data.user.UserRepository
 import com.mspw.staythefuckathome.data.user.UserService
 import com.mspw.staythefuckathome.data.video.VideoRepository
 import com.mspw.staythefuckathome.data.video.VideoService
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
