@@ -5,7 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
@@ -14,6 +15,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -41,7 +46,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <intent-filter>
+
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -52,7 +59,9 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.MainActivity"/>
+        <activity android:name=".main.MainActivity">
+
+        </activity>
 
         <activity android:name=".challengedetails.ChallengeDetailsActivity" />
 

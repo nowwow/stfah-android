@@ -7,11 +7,21 @@ import retrofit2.http.*
 
 interface UserService {
     @GET("users/")
-    fun getUserList(@Query("provider_uid")provide_id:String): Call<ListResponse<User>>
+    fun getUserList(@Query("provider_uid") provide_id: String): Call<ListResponse<User>>
 
     @POST("signup/")
-    fun registerUser(@Header("Authorization") firebaseToken:String, @Body signUp:SignUp): Call<Any>
+    fun registerUser(
+        @Header("Authorization") firebaseToken: String,
+        @Body signUp: SignUp
+    ): Call<Any>
 
     @GET("users/me/")
-    fun getMyUser(@Header("Authorization") firebaseToken:String): Call<User>
+    fun getMyUser(@Header("Authorization") firebaseToken: String): Call<User>
+
+    @PATCH("users/{userId}/")
+    fun patchAddress(
+        @Header("Authorization") firebaseToken: String,
+        @Path("userId") userId: String,
+        @Body updateAddressUser: UpdateAddressUser
+    ):Call<Any>
 }

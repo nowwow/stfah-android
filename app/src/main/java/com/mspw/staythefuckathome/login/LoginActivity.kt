@@ -38,11 +38,11 @@ class LoginActivity : AppCompatActivity() {
         }
 
         val token = SharedPreferencesUtil(this).getToken()
-        if (token != "") {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+//        if (token != "") {
+//            val intent = Intent(this, MainActivity::class.java)
+//            startActivity(intent)
+//            finish()
+//        }
     }
 
     private fun facebookLogin() {
@@ -124,8 +124,10 @@ class LoginActivity : AppCompatActivity() {
                 ) {
                     if (response.isSuccessful) {
                         if (response.body()?.results?.isEmpty() == true) {
-                            registerUser(firebaseToken, userName, userProfile)
+                            registerUser("$firebaseToken", userName, userProfile)
+                            Log.e("result size", (response.body()?.results?.size ?: 0).toString())
                         } else {
+                            Log.e("result size", (response.body()?.results?.size ?: 0).toString())
                             SharedPreferencesUtil(this@LoginActivity).setToken(firebaseToken)
                             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                             finish()
@@ -136,6 +138,7 @@ class LoginActivity : AppCompatActivity() {
                             "Network Error ${response.code()}",
                             Toast.LENGTH_SHORT
                         ).show()
+                        Log.e("Register network error", response.message())
                     }
                 }
 
@@ -148,23 +151,27 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun registerUser(firebaseToken: String, userName: String, userProfile: String) {
-        appContainer.userRepository.registerUser(firebaseToken, userName, userProfile).enqueue(object :Callback<Any>{
-            override fun onFailure(call: Call<Any>, t: Throwable) {
-                t.printStackTrace()
-            }
-
-            override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                if(response.isSuccessful){
-                    SharedPreferencesUtil(this@LoginActivity).setToken(firebaseToken)
-                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                }else{
-                    Toast.makeText(this@LoginActivity, "Sign up fail", Toast.LENGTH_SHORT).show()
+        appContainer.userRepository.registerUser("Bearer $firebaseToken", userName, userProfile)
+            .enqueue(object : Callback<Any> {
+                override fun onFailure(call: Call<Any>, t: Throwable) {
+                    t.printStackTrace()
                 }
-            }
 
-        })
+                override fun onResponse(call: Call<Any>, response: Response<Any>) {
+                    if (response.isSuccessful) {
+                        SharedPreferencesUtil(this@LoginActivity).setToken(firebaseToken)
+                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        startActivity(intent)
+                        Log.e("asd", response.code().toString())
+                        finish()
+                    } else {
+                        Toast.makeText(this@LoginActivity, "Sign up fail", Toast.LENGTH_SHORT)
+                            .show()
+                        Log.e("ddd", response.code().toString())
+                    }
+                }
+
+            })
     }
 
 //    fun signOut() {

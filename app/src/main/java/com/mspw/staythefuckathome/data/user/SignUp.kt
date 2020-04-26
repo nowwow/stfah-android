@@ -1,6 +1,10 @@
 package com.mspw.staythefuckathome.data.user
 
-class SignUp(
-    userName: String,
-    image: String
+import com.google.gson.annotations.SerializedName
+
+data class SignUp(
+    @SerializedName("username")
+    val userName: String,
+    @SerializedName("image")
+    val image: String
 )
