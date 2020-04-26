@@ -3,6 +3,7 @@ package com.mspw.staythefuckathome.challengedetails
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.mspw.staythefuckathome.data.ListResponse
+import com.mspw.staythefuckathome.data.Sponsorship
 import com.mspw.staythefuckathome.data.challenge.Challenge
 import com.mspw.staythefuckathome.data.challenge.ChallengeRepository
 import com.mspw.staythefuckathome.data.video.Video
@@ -56,14 +57,17 @@ class ChallengeDetailsViewModel(
             val (challenge, videos) = it
             val sponsorships = challenge.sponsorships
             var coupon = ""
+            var sponsorship: Sponsorship?= null
             if (sponsorships.isNotEmpty()) {
                 coupon = sponsorships[0].coupon ?: ""
+                sponsorship = sponsorships[0]
             }
 
             mutableListOf(
                 ChallengeDetails.Reward(
                     tag = challenge.title,
-                    coupon = coupon
+                    coupon = coupon,
+                    sponsorship = sponsorship
                 ),
                 ChallengeDetails.Content("", videos.results)
             )

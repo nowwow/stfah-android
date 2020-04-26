@@ -12,5 +12,7 @@ data class Sponsorship(
     @SerializedName("coupon")
     var coupon: String?,
     @SerializedName("sponsor")
-    var sponsor: User? = null
+    var sponsor: User? = null,
+    @SerializedName("external_link")
+    var external_link: String?
 ) : Parcelable

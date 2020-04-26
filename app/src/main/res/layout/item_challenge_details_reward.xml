@@ -7,48 +7,63 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/rewardTag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
-            android:textSize="18sp"
-            android:textColor="#000000"/>
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <TextView
+                android:id="@+id/rewardTag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="6dp"
                 android:textColor="#000000"
-                android:textSize="12sp"
-                android:text="Reward"/>
+                android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/rewardCoupon"
-                android:layout_width="wrap_content"
-                android:layout_height="23dp"
-                android:paddingRight="12dp"
-                android:paddingLeft="12dp"
-                android:background="@drawable/discount_coupon_background"
-                android:gravity="center"
-                android:textColor="#ffffff"
-                android:textSize="12sp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:text="Reward"
+                    android:textColor="#000000"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/rewardCoupon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="23dp"
+                    android:background="@drawable/discount_coupon_background"
+                    android:gravity="center"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:textColor="#ffffff"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/uberBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="18dp"
+            android:src="@drawable/unnamed" />
     </LinearLayout>
+
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#eeeeee"/>
+        android:background="#eeeeee" />
 
 </LinearLayout>

@@ -1,9 +1,12 @@
 package com.mspw.staythefuckathome.challengedetails
 
+import android.content.Intent
+import android.net.Uri
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,8 +23,7 @@ class ChallengeDetailsAdapter(
         if (viewType == REWARD_ITEM_VIEW_TYPE) {
             return RewardViewHolder(
                 LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_challenge_details_reward, parent, false)
-            )
+                    .inflate(R.layout.item_challenge_details_reward, parent, false), this)
         }
 
         return ContentViewHolder(
@@ -60,21 +62,37 @@ class ChallengeDetailsAdapter(
         notifyDataSetChanged()
     }
 
+    fun moveToUberEats(position: Int) {
+        val url = (details[position] as ChallengeDetails.Reward).sponsorship?.external_link
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        view.startActivity(intent)
+    }
+
     class RewardViewHolder(
-        view: View
+        view: View,
+        adapter: ChallengeDetailsAdapter
     ) : RecyclerView.ViewHolder(view) {
 
         private val tag: TextView
         private val coupon: TextView
+        private val uber: ImageView
 
         init {
             tag = view.findViewById(R.id.rewardTag)
             coupon = view.findViewById(R.id.rewardCoupon)
+            uber = view.findViewById(R.id.uberBtn)
+            uber.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION)
+                    adapter.moveToUberEats(adapterPosition)
+
+            }
         }
 
         fun bind(reward: ChallengeDetails.Reward) {
             tag.text = reward.tag
             coupon.text = reward.coupon
+
         }
 
     }

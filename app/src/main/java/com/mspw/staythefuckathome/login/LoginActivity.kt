@@ -3,6 +3,7 @@ package com.mspw.staythefuckathome.login
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.facebook.*
@@ -36,13 +37,6 @@ class LoginActivity : AppCompatActivity() {
         facebookLoginButton.setOnClickListener {
             facebookLogin()
         }
-
-        val token = SharedPreferencesUtil(this).getToken()
-//        if (token != "") {
-//            val intent = Intent(this, MainActivity::class.java)
-//            startActivity(intent)
-//            finish()
-//        }
     }
 
     private fun facebookLogin() {
@@ -79,10 +73,10 @@ class LoginActivity : AppCompatActivity() {
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         val user = auth.currentUser
-                        //서버에 정보 던지기
                         user?.getIdToken(true)
                             ?.addOnCompleteListener {
                                 it.result?.token?.let { firebaseToken ->
+                                    SharedPreferencesUtil(this@LoginActivity).setToken(firebaseToken)
                                     requestMe(token, firebaseToken)
                                 }
                             }
@@ -100,9 +94,16 @@ class LoginActivity : AppCompatActivity() {
         super.onStart()
         val currentUser = auth.currentUser
         currentUser?.run {
-            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+            loading.visibility = View.VISIBLE
+            this.getIdToken(true).addOnCompleteListener {
+                it.result?.token?.let { firebaseToken ->
+                    SharedPreferencesUtil(this@LoginActivity).setToken(firebaseToken)
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+
         }
     }
 
@@ -173,5 +174,6 @@ class LoginActivity : AppCompatActivity() {
 
             })
     }
+
 
 }
