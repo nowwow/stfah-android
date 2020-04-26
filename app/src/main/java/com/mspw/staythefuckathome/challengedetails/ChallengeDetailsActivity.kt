@@ -1,5 +1,6 @@
 package com.mspw.staythefuckathome.challengedetails
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mspw.staythefuckathome.BaseApplication
 import com.mspw.staythefuckathome.R
+import com.mspw.staythefuckathome.uploadvideo.UploadVideoActivity
 import kotlinx.android.synthetic.main.activity_challenge_details.*
 import kotlin.math.round
 
@@ -23,6 +25,7 @@ class ChallengeDetailsActivity : AppCompatActivity() {
         setupUi()
         setupViewModel()
         setupObserve()
+        setupListener()
         setupYoutubeView()
         setupContent()
     }
@@ -39,7 +42,7 @@ class ChallengeDetailsActivity : AppCompatActivity() {
 
     private fun setupUi() {
         setSupportActionBar(challengeDetailsToolbar)
-        supportActionBar?.run {
+        supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)
         }
@@ -67,6 +70,12 @@ class ChallengeDetailsActivity : AppCompatActivity() {
             details.observe(this@ChallengeDetailsActivity, Observer {
                 detailsAdapter.setDetails(it)
             })
+        }
+    }
+
+    private fun setupListener() {
+        challengeDetailsUploadButton.setOnClickListener {
+            startActivity(Intent(this, UploadVideoActivity::class.java))
         }
     }
 
