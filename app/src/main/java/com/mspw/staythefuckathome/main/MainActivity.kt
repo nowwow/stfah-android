@@ -1,13 +1,15 @@
 package com.mspw.staythefuckathome.main
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
+import com.google.firebase.storage.FirebaseStorage
 import com.mspw.staythefuckathome.AppContainer
 import com.mspw.staythefuckathome.BaseApplication
 import com.mspw.staythefuckathome.R
@@ -25,6 +27,7 @@ import kotlinx.android.synthetic.main.drawer_main.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appContainer: AppContainer
@@ -52,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                     Picasso.get().load(response.body()?.image)
                         .transform(CropCircleTransformation())
                         .into(userProfile)
-                    if (response.body()?.address == "" || true) {
+                    if (response.body()?.address == "" ) {
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.fragment, MapFragment()).commit()
                         toolbar.visibility = View.GONE
@@ -82,10 +85,15 @@ class MainActivity : AppCompatActivity() {
                     return@setOnClickListener
                 } else {
                     replaceFragment(HomeFragment())
+                    drawerLayout.closeDrawer(Gravity.LEFT)
                 }
             }
             settingBtn.setOnClickListener {
-
+                val fragmentManager = supportFragmentManager
+                fragmentManager.beginTransaction()
+                    .replace(R.id.fragment, MapFragment()).commit()
+                toolbar.visibility = View.GONE
+                drawerLayout.closeDrawer(Gravity.LEFT)
             }
             signOutBtn.setOnClickListener {
                 val intent = Intent(this@MainActivity, LoginActivity::class.java)
@@ -97,6 +105,7 @@ class MainActivity : AppCompatActivity() {
                     return@setOnClickListener
                 } else {
                     replaceFragment(MyPageFragment())
+                    drawerLayout.closeDrawer(Gravity.LEFT)
                 }
             }
 

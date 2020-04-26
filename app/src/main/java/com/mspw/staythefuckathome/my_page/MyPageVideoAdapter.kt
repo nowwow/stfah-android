@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.mspw.staythefuckathome.R
 import com.mspw.staythefuckathome.data.video.Video
 import com.squareup.picasso.Picasso
@@ -19,7 +20,7 @@ class MyPageVideoAdapter(
 
     class ViewHolder(
         v: View,
-        listener: MyPageVideoAdapter.OnItemClickedListener,
+        listener: OnItemClickedListener,
         items: ArrayList<Video>
     ) : RecyclerView.ViewHolder(v) {
         init {
@@ -40,8 +41,11 @@ class MyPageVideoAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.run {
-            Picasso.get().load(items[position].url).into(image)
-            title.text = items[position].toString()
+            Glide.with(context)
+                .load(items[position].url)
+                .centerCrop()
+                .into(image)
+            title.text = items[position].title
             //TODO : Add video -> tag
         }
     }

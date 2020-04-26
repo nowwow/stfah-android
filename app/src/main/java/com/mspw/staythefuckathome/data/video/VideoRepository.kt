@@ -5,6 +5,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.mspw.staythefuckathome.data.ListResponse
 import io.reactivex.Flowable
 import io.reactivex.Single
+import retrofit2.Call
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -36,6 +37,10 @@ class VideoRepository(
 
     companion object {
         private val TAG = VideoRepository::class.java.simpleName
+    }
+
+    fun findAllVideoByCreatorId(creator:Long): Call<ListResponse<Video>> {
+        return videoService.findAllVideoByCreatorId(creator)
     }
 
 }

@@ -6,10 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.mspw.staythefuckathome.BaseApplication
 import com.mspw.staythefuckathome.R
 import com.mspw.staythefuckathome.SharedPreferencesUtil
+import com.mspw.staythefuckathome.data.ListResponse
 import com.mspw.staythefuckathome.data.user.User
 import com.mspw.staythefuckathome.data.video.Video
 import com.mspw.staythefuckathome.playchallenge.PlayChallengeActivity
@@ -34,8 +36,8 @@ class MyPageFragment : Fragment(),
         val appContainer = (activity?.application as BaseApplication).appContainer
         mAdapter = MyPageVideoAdapter(items, this)
         v.run {
-
-            appContainer.userRepository.getUserData(SharedPreferencesUtil(context!!).getToken())
+            list.adapter = mAdapter
+            appContainer.userRepository.getUserData("Bearer ${SharedPreferencesUtil(context!!).getToken()}")
                 .enqueue(object : Callback<User> {
                     override fun onFailure(call: Call<User>, t: Throwable) {
                         t.printStackTrace()
@@ -49,14 +51,39 @@ class MyPageFragment : Fragment(),
                                 .transform(CropCircleTransformation())
                                 .into(profile)
                             nameText.text = response.body()?.name
+                            addressText.text = response.body()?.address?.split(":")?.get(0) ?: "address"
+                            getUserVideo(response.body()?.id)
                         } else {
-
+                            Toast.makeText(context, "Get data error", Toast.LENGTH_SHORT).show()
                         }
                     }
 
                 })
         }
         return v
+    }
+
+    private fun getUserVideo(id: Long?) {
+        (activity?.application as BaseApplication).appContainer.videoRepository
+            .findAllVideoByCreatorId(id ?: 0)
+            .enqueue(object : Callback<ListResponse<Video>> {
+                override fun onFailure(call: Call<ListResponse<Video>>, t: Throwable) {
+                    t.printStackTrace()
+                    Log.e("Get video", t.message)
+                }
+
+                override fun onResponse(c: Call<ListResponse<Video>>, response: Response<ListResponse<Video>>) {
+                    if(response.isSuccessful){
+                        response.body()?.results?.let{
+                            items.addAll(it)
+                            mAdapter.notifyDataSetChanged()
+                        }
+                    }else{
+                        Toast.makeText(context, "Get data error", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            })
     }
 
 
