@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".main.map.MapActivity"></activity>
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait">
@@ -53,7 +54,6 @@
         <activity
             android:name=".login.LoginActivity"
             android:screenOrientation="portrait">
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -65,23 +65,18 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".main.MainActivity"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".challengedetails.ChallengeDetailsActivity"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".playchallenge.PlayChallengeActivity"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".uploadvideo.UploadVideoActivity"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
