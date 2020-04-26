@@ -33,6 +33,7 @@ import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appContainer: AppContainer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -58,12 +59,10 @@ class MainActivity : AppCompatActivity() {
                         .transform(CropCircleTransformation())
                         .into(userProfile)
                     if (response.body()?.address == "" ) {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragment, MapFragment()).commit()
+                        replaceFragment(MapFragment())
                         toolbar.visibility = View.GONE
                     } else {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragment, HomeFragment()).commit()
+                        replaceFragment(HomeFragment())
                     }
                 } else {
                     Log.e("Get user data error", response.code().toString() + response.message())
@@ -91,9 +90,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             settingBtn.setOnClickListener {
-                val fragmentManager = supportFragmentManager
-                fragmentManager.beginTransaction()
-                    .replace(R.id.fragment, MapFragment()).commit()
+                replaceFragment(MapFragment())
                 toolbar.visibility = View.GONE
                 drawerLayout.closeDrawer(Gravity.LEFT)
             }
