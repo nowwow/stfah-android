@@ -8,13 +8,15 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Challenge(
     @SerializedName("id")
-    val id: String,
-    @SerializedName("url")
-    var url: String? = null,
-    @SerializedName("thumbnail")
-    var thumbnail: Image? = null,
-    @SerializedName("thumbnail")
+    val id: Long = 0,
+    @SerializedName("image")
+    var image: String? = null,
+    @SerializedName("title")
     var title: String? = null,
+    @SerializedName("yt_video_id")
+    var videoId: String? = null,
+    @SerializedName("start_seconds")
+    var startSeconds: Int = 0,
     @SerializedName("reward")
     var reward: String? = null
-): Parcelable
+) : Parcelable
