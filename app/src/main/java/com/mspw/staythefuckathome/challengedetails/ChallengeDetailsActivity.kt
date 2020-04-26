@@ -4,11 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.webkit.WebChromeClient
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mspw.staythefuckathome.BaseApplication
 import com.mspw.staythefuckathome.R
+import com.mspw.staythefuckathome.data.challenge.Challenge
+import com.mspw.staythefuckathome.data.video.Video
+import com.mspw.staythefuckathome.playchallenge.PlayChallengeActivity
 import com.mspw.staythefuckathome.uploadvideo.UploadVideoActivity
 import kotlinx.android.synthetic.main.activity_challenge_details.*
 import kotlin.math.round
@@ -18,6 +22,8 @@ class ChallengeDetailsActivity : AppCompatActivity() {
     private lateinit var viewModel: ChallengeDetailsViewModel
 
     private lateinit var detailsAdapter: ChallengeDetailsAdapter
+
+    private val challenge by lazy { intent.getParcelableExtra<Challenge?>("challenge") }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +60,9 @@ class ChallengeDetailsActivity : AppCompatActivity() {
             appContainer.challengeRepository,
             appContainer.videoRepository
         )
+
+        val id = challenge?.id ?: return
+        viewModel.loadData(id)
     }
 
     private fun setupObserve() {
@@ -88,29 +97,20 @@ class ChallengeDetailsActivity : AppCompatActivity() {
             val density = displayMetrics.density
             val width = displayMetrics.widthPixels / density
             val height = round((width / TRANSVERSE_RATIO) * SPECIES_RATIO)
-//            val (startSeconds, endSeconds) = if (youtube.isNotNull() && youtube!!.products.isNotEmpty()) {
-//                val product = youtube!!.products[0]
-//                Pair(product.startSeconds, product.endSeconds)
-//            } else {
-//                Pair(0, 0)
-//            }
 
-//            val url = "${BASE_URL}webviews/youtube/" +
-//                "?width=${width.toInt()}" +
-//                "&height=${height.toInt()}" +
-//                "&video_id=${youtube?.videoId}" +
-//                "&start_seconds=${startSeconds}" +
-//                "&end_seconds=${endSeconds}"
+            val url = "${BASE_URL}webviews/youtube/" +
+                "?width=${width.toInt()}" +
+                "&height=${height.toInt()}" +
+                "&video_id=${challenge?.videoId}" +
+                "&start_seconds=${challenge?.startSeconds ?: 0}" +
+                "&end_seconds=0"
             challengeDetailsYoutubeViewContainer.layoutParams.height = (height * density).toInt()
             settings.apply {
                 javaScriptEnabled = true
                 javaScriptCanOpenWindowsAutomatically = true
                 mediaPlaybackRequiresUserGesture = false
             }
-//            webChromeClient = WatchYoutubeChromeClient(
-//                this@WatchYoutubeFragment,
-//                mainActivity
-//            )
+            webChromeClient = ChallengeDetailsChromeClient(this@ChallengeDetailsActivity)
             loadUrl(url)
         }
     }
@@ -118,13 +118,21 @@ class ChallengeDetailsActivity : AppCompatActivity() {
     private fun setupContent() {
         challengeDetailsContent.apply {
             layoutManager = LinearLayoutManager(context)
-            detailsAdapter = ChallengeDetailsAdapter(mutableListOf())
+            detailsAdapter = ChallengeDetailsAdapter(mutableListOf(), this@ChallengeDetailsActivity)
             adapter = detailsAdapter
         }
     }
 
+    fun moveToPlayChallenge(video: Video) {
+        val intent = Intent(this, PlayChallengeActivity::class.java).apply {
+            putExtra("video", video)
+        }
+        startActivity(intent)
+    }
+
     companion object {
         private val TAG = ChallengeDetailsActivity::class.java.simpleName
+        private const val BASE_URL = "https://test.mspw.io/"
         private const val TRANSVERSE_RATIO = 16
         private const val SPECIES_RATIO = 9
     }

@@ -8,8 +8,8 @@ class VideoRepository(
     private val videoService: VideoService
 ) {
 
-    fun findAllByTitle(title: String): Flowable<ListResponse<Video>> {
-        return videoService.findAllByTitle(title)
+    fun findAllByChallengeId(challengeId: Long): Flowable<ListResponse<Video>> {
+        return videoService.findAllByChallengeId(challengeId)
     }
 
     fun findOneById(id: Long): Single<Video> {

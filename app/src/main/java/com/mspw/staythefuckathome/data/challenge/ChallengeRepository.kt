@@ -12,7 +12,7 @@ class ChallengeRepository(
         return challengeService.findAll()
     }
 
-    fun findOneById(id: String): Single<Challenge> {
+    fun findOneById(id: Long): Single<Challenge> {
         return challengeService.findOneById(id)
     }
 

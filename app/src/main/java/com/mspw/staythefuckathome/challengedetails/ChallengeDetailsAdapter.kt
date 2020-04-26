@@ -10,7 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mspw.staythefuckathome.R
 
 class ChallengeDetailsAdapter(
-    private val details: MutableList<ChallengeDetails>
+    private val details: MutableList<ChallengeDetails>,
+    private val view: ChallengeDetailsActivity
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val viewPool = RecyclerView.RecycledViewPool()
@@ -26,7 +27,8 @@ class ChallengeDetailsAdapter(
         return ContentViewHolder(
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_challenge_details_content, parent, false),
-            viewPool
+            viewPool,
+            view
         )
     }
 
@@ -79,7 +81,8 @@ class ChallengeDetailsAdapter(
 
     class ContentViewHolder(
         view: View,
-        pool: RecyclerView.RecycledViewPool
+        pool: RecyclerView.RecycledViewPool,
+        acitivity: ChallengeDetailsActivity
     ) : RecyclerView.ViewHolder(view) {
 
         private val videoList: RecyclerView
@@ -106,7 +109,7 @@ class ChallengeDetailsAdapter(
                 val imageSize = (displayMetrics.widthPixels - spacing) / SPAN_COUNT
                 addItemDecoration(ChallengeDetailsVideoSpaceDecoration(sideSpacing, bottomSpacing))
                 layoutManager = GridLayoutManager(context, SPAN_COUNT)
-                adapter = ChallengeDetailsContentAdapter(mutableListOf(), imageSize)
+                adapter = ChallengeDetailsContentAdapter(mutableListOf(), acitivity, imageSize)
             }
         }
 
