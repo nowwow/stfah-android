@@ -45,8 +45,7 @@ class MyPageVideoAdapter(
                 .load(items[position].url)
                 .centerCrop()
                 .into(image)
-            title.text = items[position].title
-            //TODO : Add video -> tag
+            title.text = items[position].challenge?.title
         }
     }
 }

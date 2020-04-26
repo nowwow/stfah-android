@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.facebook.login.LoginManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.mspw.staythefuckathome.AppContainer
 import com.mspw.staythefuckathome.BaseApplication
@@ -96,6 +98,9 @@ class MainActivity : AppCompatActivity() {
                 drawerLayout.closeDrawer(Gravity.LEFT)
             }
             signOutBtn.setOnClickListener {
+                FirebaseAuth.getInstance().signOut()
+                LoginManager.getInstance().logOut()
+                SharedPreferencesUtil(this@MainActivity).setToken("")
                 val intent = Intent(this@MainActivity, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -118,4 +123,5 @@ class MainActivity : AppCompatActivity() {
         fragmentManager.beginTransaction()
             .replace(R.id.fragment, fragment).commit()
     }
+
 }
