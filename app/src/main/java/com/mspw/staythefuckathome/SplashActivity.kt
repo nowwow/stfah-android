@@ -21,7 +21,7 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        val list = listOf<String>("https://media.tenor.com/images/ca9424009abc875f88dd53f8f88f3c5b/tenor.gif",
+        val list = listOf<String>(
             "https://media.tenor.com/images/5608cf63c47add970c1989e0732f3689/tenor.gif",
             "https://media.tenor.com/images/629c0911af2a4d2bd848b68bf3bf7ead/tenor.gif",
             "https://media.tenor.com/images/d3e5f7473ef989771bfce995a99fa552/tenor.gif",
@@ -30,11 +30,8 @@ class SplashActivity : AppCompatActivity() {
             "https://media.tenor.com/images/d79c10794976fcc5cc6c560ff967ffcf/tenor.gif",
             "https://media.tenor.com/images/7c0c5ad3425e52d62968884cc594c01b/tenor.gif",
             "https://media.tenor.com/images/00cb910abdcf166081a1265186659c06/tenor.gif",
-            "https://media.tenor.com/images/a3e16bf1286418df14dd2801a1ffad5c/tenor.gif",
-            "https://cdn.sidlee.com/-/media/sidlee/work/skyn/stay-home-and-fuck/skyn_stayhome.gif?mw=1420&hash=47C71AF350AF886CA019F2C71015DF8FE267B8B7",
             "https://media.giphy.com/media/Y3GPYKwenR9SbriKvr/giphy.gif",
             "https://media.giphy.com/media/SqMjwNds2rQ31s9Vp3/giphy.gif",
-            "https://lh3.googleusercontent.com/proxy/DIt6eHvdKMrUifZFdv_c2Mw_y4QkV5ys4DyIkVz0LfmtuRa3TSzScmG6GJfSfft7_HQICrhW7348ssiZ2vX81xj69j5sjgK4ZcutflNOhbMv6v6YCyFtIMs",
             "http://optimal.inven.co.kr/upload/2019/11/26/bbs/i15108711150.gif")
 
         Glide.with(this)

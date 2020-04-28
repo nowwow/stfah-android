@@ -60,11 +60,6 @@ class MainActivity : AppCompatActivity() {
                     Picasso.get().load(response.body()?.image)
                         .transform(CropCircleTransformation())
                         .into(userProfile)
-                    if (response.body()?.address == "" ) {
-                        val intent = Intent(this@MainActivity, MapActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
                 } else {
                     Log.e("Get user data error", response.code().toString() + response.message())
                 }
@@ -89,10 +84,6 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(HomeFragment())
                     drawerLayout.closeDrawer(Gravity.LEFT)
                 }
-            }
-            settingBtn.setOnClickListener {
-                val intent = Intent(this@MainActivity, MapActivity::class.java)
-                startActivity(intent)
             }
             signOutBtn.setOnClickListener {
                 FirebaseAuth.getInstance().signOut()

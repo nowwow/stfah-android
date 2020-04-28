@@ -38,7 +38,7 @@ class AppContainer {
     val videoRepository = VideoRepository(videoService)
 
     companion object {
-        private const val BASE_URL = "https://test.mspw.io/v1/"
+        private const val BASE_URL = "https://api.staythefxxxathome.com/"
         private const val TIME_OUT_SECONDS = 9000L
     }
 
