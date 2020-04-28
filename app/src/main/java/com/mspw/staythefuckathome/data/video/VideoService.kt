@@ -18,7 +18,7 @@ interface VideoService {
 
     @GET("videos/")
     fun findAllByChallengeId(
-        @Query("challenge_id") challengeId: Long
+        @Query("challenge") challengeId: Long
     ): Flowable<ListResponse<Video>>
 
     @GET("videos/")

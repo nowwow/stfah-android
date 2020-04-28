@@ -43,6 +43,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
         showLocationInfo()
         getMyLocationWithPermissionCheck()
+        googleMap
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +84,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 })
         }
 
+        mMap?.setOnMapClickListener {
+            mLocation?.latitude = it.latitude
+            mLocation?.longitude = it.longitude
+            showLocationInfo()
+        }
+
         resetBtn.setOnClickListener {
             locationInformationLayout.visibility = View.GONE
             currentMarker?.remove()
@@ -97,6 +104,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun showLocationInfo() {
         mLocation?.let {
             mMap?.setOnMapClickListener { }
+
             val myLocation = LatLng(it.latitude, it.longitude)
             val markerOptions = MarkerOptions()
             markerOptions.position(myLocation)
@@ -136,7 +144,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        onRequestPermissionsResult(requestCode, grantResults)
+        onRequestPermissionsResult(requestCode,permissions, grantResults)
     }
 
 
@@ -149,7 +157,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             LocationServices.getFusedLocationProviderClient(this).lastLocation
         task.addOnSuccessListener { location ->
             if (location != null) {
-                searchingLocationLayout?.visibility = View.GONE
                 mLocation = location
                 showLocationInfo()
             }
