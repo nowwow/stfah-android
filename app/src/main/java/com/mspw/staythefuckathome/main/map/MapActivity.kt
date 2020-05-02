@@ -5,7 +5,6 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -33,31 +32,37 @@ import java.io.IOException
 
 @RuntimePermissions
 class MapActivity : AppCompatActivity(), OnMapReadyCallback {
-    private var mMap: GoogleMap?= null
+
+    private var mMap: GoogleMap? = null
     private var mLocation: Location? = null
     private var address: String = ""
     private var currentMarker: Marker? = null
 
-
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        showLocationInfo()
+        mMap?.setOnMapClickListener {
+            mLocation?.latitude = it.latitude
+            mLocation?.longitude = it.longitude
+            showLocationInfo(mLocation)
+        }
         getMyLocationWithPermissionCheck()
-        googleMap
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-
-        val mapFragment: SupportMapFragment? = supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment?
+        val mapFragment: SupportMapFragment? = supportFragmentManager
+            .findFragmentById(R.id.mapFragment) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-        locationInformationLayout.visibility = View.GONE
         setBtn.setOnClickListener {
-            if (address == "") return@setOnClickListener
-            val token = SharedPreferencesUtil(this).getToken()
+            if (address.isBlank()) {
+                return@setOnClickListener
+            }
+
+            val shared = SharedPreferencesUtil(this)
+            val token = shared.getToken()
             (application as BaseApplication).appContainer.userRepository
                 .patchUserAddress(
                     token,
@@ -71,6 +76,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
                     override fun onResponse(call: Call<Any>, response: Response<Any>) {
                         if (response.isSuccessful) {
+                            shared.setAddress(address)
                             finish()
                         } else {
                             Toast.makeText(
@@ -84,40 +90,29 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 })
         }
 
-        mMap?.setOnMapClickListener {
-            mLocation?.latitude = it.latitude
-            mLocation?.longitude = it.longitude
-            showLocationInfo()
-        }
-
         resetBtn.setOnClickListener {
             locationInformationLayout.visibility = View.GONE
             currentMarker?.remove()
-            mMap?.setOnMapClickListener {
-                mLocation?.latitude = it.latitude
-                mLocation?.longitude = it.longitude
-                showLocationInfo()
-            }
         }
     }
 
-    private fun showLocationInfo() {
-        mLocation?.let {
-            mMap?.setOnMapClickListener { }
-
-            val myLocation = LatLng(it.latitude, it.longitude)
+    private fun showLocationInfo(param: Location?) {
+        param?.also { location ->
+            val myLocation = LatLng(location.latitude, location.longitude)
             val markerOptions = MarkerOptions()
             markerOptions.position(myLocation)
             markerOptions.title("My location")
             mMap?.run {
+                currentMarker?.remove()
                 currentMarker = addMarker(markerOptions)
                 moveCamera(CameraUpdateFactory.newLatLng(myLocation))
+                animateCamera(CameraUpdateFactory.zoomTo(15f))
             }
             locationInformationLayout?.visibility = View.VISIBLE
             val list: List<Address>? = try {
                 Geocoder(this).getFromLocation(
-                    mLocation?.latitude ?: 0.0,
-                    mLocation?.longitude ?: 0.0,
+                    location.latitude,
+                    location.longitude,
                     10
                 )
             } catch (e: IOException) {
@@ -125,15 +120,16 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 null
             }
 
-            if (list != null) {
-                    if (list.isNotEmpty()) {
-                        addressText.text = list[0].getAddressLine(0).toString()
-                        address = list[0].getAddressLine(0)
-                            .toString() + ":" + mLocation?.latitude + ":" + mLocation?.longitude
-                    }
-            } else {
+            if (list.isNullOrEmpty()) {
                 addressText.text = "Address search error"
                 address = ""
+                return@also
+            }
+
+            list.also {
+                val addressLine = it[0].getAddressLine(0)
+                addressText.text = addressLine
+                address = "addressLine: ${location.latitude}:${location.longitude}"
             }
         }
     }
@@ -144,7 +140,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        onRequestPermissionsResult(requestCode,permissions, grantResults)
+        onRequestPermissionsResult(requestCode, grantResults)
     }
 
 
@@ -156,11 +152,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         val task: Task<Location> =
             LocationServices.getFusedLocationProviderClient(this).lastLocation
         task.addOnSuccessListener { location ->
-            if (location != null) {
-                mLocation = location
-                showLocationInfo()
-            }
+            mLocation = location
+            showLocationInfo(mLocation)
         }
-
     }
+
+    companion object {
+        private val TAG = MapActivity::class.java.simpleName
+    }
+
 }

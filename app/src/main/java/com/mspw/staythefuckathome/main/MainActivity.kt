@@ -33,6 +33,7 @@ import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var appContainer: AppContainer
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,19 +48,25 @@ class MainActivity : AppCompatActivity() {
         replaceFragment(HomeFragment())
 
 
-        val token = SharedPreferencesUtil(this).getToken()
+        val shared = SharedPreferencesUtil(this)
+        val token = shared.getToken()
         appContainer.userRepository.getUserData("Bearer $token").enqueue(object : Callback<User> {
             override fun onFailure(call: Call<User>, t: Throwable) {
                 t.printStackTrace()
-                Log.e("Get user data fail", t.message)
+                Log.e("Get user data fail", t.message.toString())
             }
 
             override fun onResponse(call: Call<User>, response: Response<User>) {
                 if (response.isSuccessful) {
-                    nameText.text = response.body()?.name ?: ""
-                    Picasso.get().load(response.body()?.image)
+                    val user = response.body()
+                    nameText.text = user?.name ?: ""
+                    Picasso.get().load(user?.image)
                         .transform(CropCircleTransformation())
                         .into(userProfile)
+
+                    if (shared.getAddress() != user?.address) {
+                        Log.e("MainActivity", "stay the fuck at home")
+                    }
                 } else {
                     Log.e("Get user data error", response.code().toString() + response.message())
                 }
@@ -72,7 +79,6 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setDrawer() {
-
         drawer.run {
             closeBtn.setOnClickListener {
                 drawerLayout.closeDrawer(Gravity.LEFT)
@@ -92,6 +98,10 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this@MainActivity, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
+            }
+            settingBtn.setOnClickListener {
+                val intent = Intent(this@MainActivity, MapActivity::class.java)
+                startActivity(intent)
             }
             myPageBtn.setOnClickListener {
                 if (supportFragmentManager.findFragmentById(R.id.fragment) is MyPageFragment) {

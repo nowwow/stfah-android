@@ -15,9 +15,24 @@ class SharedPreferencesUtil(context: Context) {
     }
 
     fun setToken(token: String) {
-        editor.putString("token", token)
+        editor.putString(TOKEN, token)
         editor.commit()
     }
 
-    fun getToken(): String = preferences.getString("token", "") ?: ""
+    fun getToken(): String = preferences.getString(TOKEN, "") ?: ""
+
+    fun setAddress(address: String) {
+        editor.putString(ADDRESS, address)
+        editor.commit()
+    }
+
+    fun getAddress(): String {
+        return preferences.getString(ADDRESS, "") ?: ""
+    }
+
+    companion object {
+        private const val TOKEN = "token"
+        private const val ADDRESS = "address"
+    }
+
 }

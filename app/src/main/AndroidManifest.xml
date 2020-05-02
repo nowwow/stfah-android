@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".main.map.MapActivity"></activity>
+
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
         <activity
             android:name=".SplashActivity"
@@ -67,7 +67,10 @@
         </activity>
         <activity
             android:name=".main.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".main.map.MapActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".challengedetails.ChallengeDetailsActivity"
             android:screenOrientation="portrait" />

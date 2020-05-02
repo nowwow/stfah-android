@@ -13,5 +13,6 @@ data class User(
     var name: String? = null,
     @SerializedName("image")
     var image: String? = null,
+    @SerializedName("address")
     var address: String = ""
 ) : Parcelable
