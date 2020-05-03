@@ -21,7 +21,7 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        val list = listOf<String>(
+        val list = listOf(
             "https://media.tenor.com/images/5608cf63c47add970c1989e0732f3689/tenor.gif",
             "https://media.tenor.com/images/629c0911af2a4d2bd848b68bf3bf7ead/tenor.gif",
             "https://media.tenor.com/images/d3e5f7473ef989771bfce995a99fa552/tenor.gif",
@@ -32,7 +32,8 @@ class SplashActivity : AppCompatActivity() {
             "https://media.tenor.com/images/00cb910abdcf166081a1265186659c06/tenor.gif",
             "https://media.giphy.com/media/Y3GPYKwenR9SbriKvr/giphy.gif",
             "https://media.giphy.com/media/SqMjwNds2rQ31s9Vp3/giphy.gif",
-            "http://optimal.inven.co.kr/upload/2019/11/26/bbs/i15108711150.gif")
+            "http://optimal.inven.co.kr/upload/2019/11/26/bbs/i15108711150.gif"
+        )
 
         Glide.with(this)
             .asGif()
@@ -65,11 +66,6 @@ class SplashActivity : AppCompatActivity() {
                 }
             })
             .into(gifPlayer)
-
-
-
-
-
 
     }
 }
